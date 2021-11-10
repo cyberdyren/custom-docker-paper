@@ -86,5 +86,4 @@ ARG memory_size=1G
 ENV MEMORYSIZE=$memory_size
 
 RUN ["chmod", "+x", "/mc/entrypoint.sh"]
-
 ENTRYPOINT ["/mc/entrypoint.sh"]
