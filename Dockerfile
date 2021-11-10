@@ -48,9 +48,9 @@ RUN apt-get update && apt-get install -y openssh-server tmux htop iftop gosu
 COPY ./config/sshd_config /etc/ssh/sshd_config
 
 #ToDo
-ARG = sshrootpassword=root:y0urSecuReP4SsWoRD
+ARG = sshrootpassword=y0urSecuReP4SsWoRD
 ENV SSH_ROOT_PASSWORD=$sshrootpassword
-#sets ssh root password
+#sets the ssh root password
 RUN echo 'root:$sshrootpassword' | chpasswd 
 
 COPY ./config/.bashrc /root/.bashrc
