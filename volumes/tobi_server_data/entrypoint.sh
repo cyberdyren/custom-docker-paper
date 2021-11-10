@@ -12,11 +12,13 @@ if ! id "$DOCKER_USER" >/dev/null 2>&1; then
     echo "Starting with $USER_ID:$GROUP_ID (UID:GID)"
 
     addgroup --system --gid $GROUP_ID $DOCKER_GROUP
-    useradd -s "/bin/sh" -u $USER_ID --gid $DOCKER_GROUP -D $DOCKER_USER
+    #useradd -s "/bin/sh" -u $USER_ID --gid $DOCKER_GROUP -D $DOCKER_USER
+    #useradd -s "/bin/sh" -u $USER_ID --gid $DOCKER_GROUP -D $DOCKER_USER
+    useradd --shell "/bin/sh" --uid $USER_ID --gid $GROUP_ID $DOCKER_USER
 
-    chown -vR "{$USER_ID}":"${GROUP_ID}" /mc/
+    chown -vR $USER_ID:$GROUP_ID /mc/
     chmod -vR ug+rwx /mc/
-    chown -vR "{$USER_ID}":"${GROUP_ID}" /mc
+    chown -vR $USER_ID:$GROUP_ID /mc
     echo "First start of the docker container, start initialization process..."
 fi
 
@@ -26,10 +28,9 @@ echo "Skipping wait time for database warmup..."
 
 
 echo "Ready..."
-exec su-exec $DOCKER_USER \
-    tmux \
+exec gosu $DOCKER_USER tmux \
       new-session -s tobi-server "iftop -i eth0 -f 'dst port 25565' ; read" \; \
-      split-window "/usr/sbin/sshd && /usr/local/openjdk-16/bin/java -jar \
+      split-window "/usr/sbin/sshd && /usr/local/openjdk-16/bin/java \
         -Xms$MEMORYSIZE \
         -Xmx$MEMORYSIZE \
         $JAVAFLAGS /mc/paperspigot.jar --nojline nogui ; read" \; \
