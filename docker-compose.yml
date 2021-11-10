@@ -1,0 +1,44 @@
+version: "3.9" 
+
+volumes:
+  tobi_server_data:
+    external: 
+      name:  ${TOBI_VOLUME_SERVER_DATA}
+
+services:
+
+  server:
+    build: .
+    ports:
+      - "34245:25565"
+      - "42751:22"
+
+    volumes:
+#      - .:/mc
+      - tobi_server_data:/mc/
+
+    restart: always
+
+
+    stdin_open: true #docker run -i
+    tty: true        #docker run -t
+
+    stop_grace_period: 1m30s
+
+    environment:
+      MEMORYSIZE: "1G"
+
+
+    networks:
+      tobi-server-net:
+        ipv4_address: 172.16.226.3
+
+
+networks:
+  tobi-server-net:
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.16.226.0/24"
+          gateway: 172.16.226.1
+        - subnet: "2001:3984:3926::/64"
