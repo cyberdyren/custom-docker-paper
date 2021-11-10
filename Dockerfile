@@ -56,6 +56,7 @@ RUN echo 'root:$sshrootpassword' | chpasswd
 COPY ./config/.bashrc /root/.bashrc
 
 RUN mkdir /var/run/sshd
+RUN ssh-keygen -A
 RUN /etc/init.d/ssh start
 
 #Expose Network ports

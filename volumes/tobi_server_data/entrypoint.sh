@@ -30,10 +30,7 @@ echo "Skipping wait time for database warmup..."
 echo "Ready..."
 exec gosu $DOCKER_USER tmux \
       new-session -s tobi-server "iftop -i eth0 -f 'dst port 25565' ; read" \; \
-      split-window "/usr/sbin/sshd && /usr/local/openjdk-16/bin/java \
-        -Xms$MEMORYSIZE \
-        -Xmx$MEMORYSIZE \
-        $JAVAFLAGS /mc/paperspigot.jar --nojline nogui ; read" \; \
+      split-window "/usr/sbin/sshd && /usr/local/openjdk-16/bin/java -jar -Xms$MEMORYSIZE -Xmx$MEMORYSIZE $JAVAFLAGS /mc/paperspigot.jar --nojline nogui ; read" \; \
       select-layout even-horizontal
 
 
