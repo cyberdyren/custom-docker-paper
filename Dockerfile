@@ -5,8 +5,8 @@ FROM openjdk:16-alpine AS build
 
 LABEL maintainer="Max Oppermann <max@oppermann.fun> https://github.com/Max-42"
 
-ARG paperspigot_ci_url=https://papermc.io/ci/job/Paper-1.17.1/lastStableBuild/artifact/
-#ARG paperspigot_ci_url=https://papermc.io/api/v1/paper/1.17.1/latest/download
+#ARG paperspigot_ci_url=https://papermc.io/ci/job/Paper-1.17.1/lastStableBuild/artifact/
+ARG paperspigot_ci_url=https://papermc.io/api/v1/paper/1.17.1/latest/download
 ENV PAPERSPIGOT_CI_URL=$paperspigot_ci_url
 
 WORKDIR /opt/minecraft
@@ -85,8 +85,6 @@ RUN set -eux; \
 ARG memory_size=1G
 ENV MEMORYSIZE=$memory_size
 
-RUN chmod +x /mc/entrypoint.sh
-
-#CMD ["chmod", "+x", "/mc/start.sh"]
+RUN ["chmod", "+x", "/mc/entrypoint.sh"]
 
 ENTRYPOINT ["/mc/entrypoint.sh"]
