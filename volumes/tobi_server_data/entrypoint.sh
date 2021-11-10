@@ -12,7 +12,7 @@ if ! id "$DOCKER_USER" >/dev/null 2>&1; then
     echo "Starting with $USER_ID:$GROUP_ID (UID:GID)"
 
     addgroup -g $GROUP_ID $DOCKER_GROUP
-    adduser -s /bin/sh -u $USER_ID -G $DOCKER_GROUP -D $DOCKER_USER
+    adduser -s /bin/sh -u $USER_ID -gid $DOCKER_GROUP -D $DOCKER_USER
 
     chown -vR $USER_ID:$GROUP_ID /opt/minecraft
     chmod -vR ug+rwx /opt/minecraft
