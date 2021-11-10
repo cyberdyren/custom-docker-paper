@@ -10,4 +10,4 @@ done
 
 docker volume create --name=tobi_server_data
 
-docker-compose --env-file .env up --build-arg sshrootpassword=root:y0urSecuReP4SsWoRD
+docker-compose --env-file .env up

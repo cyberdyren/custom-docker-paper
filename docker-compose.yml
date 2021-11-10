@@ -10,8 +10,8 @@ services:
   server:
     build: .
     ports:
-      - "34245:25565"
-      - "42751:22"
+      - ${PAPER_PORT}:25565
+      - ${SSH_PORT}:22
 
     volumes:
 #      - .:/mc
