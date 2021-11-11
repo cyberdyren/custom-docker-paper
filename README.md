@@ -35,5 +35,5 @@ cd custom-docker-paper
 cp ./.env.example ./.env
 nano ./.env
 sudo docker volume create --name=tobi_server_data
-docker-compose --env-file .env up --build
+sudo docker-compose --env-file .env up --build
 ```
