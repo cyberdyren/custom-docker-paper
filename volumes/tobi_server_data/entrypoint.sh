@@ -26,8 +26,6 @@ export HOME=/home/$DOCKER_USER
 
 echo "Skipping wait time for database warmup..."
 
-echo "Generating ssh Key..."
-ssh-keygen -A
 echo "Starting ssh Server..."
 /usr/sbin/sshd
 echo "Ready..."
@@ -36,8 +34,8 @@ echo "Creating or attaching to tmux session..."
 
 #iftop may not work due to missing privileges
 exec gosu $DOCKER_USER tmux \
-  new-session -s tobi-server "iftop -i eth0 -f 'dst port 25565' ; read" \; \
-  split-window "/usr/local/openjdk-16/bin/java -jar -Xms$MEMORYSIZE -Xmx$MEMORYSIZE $JAVAFLAGS /mc/paperspigot.jar --nojline nogui ; read" \; \
+  new-session -s tobi-server "exec iftop -i eth0 -f 'dst port 25565' ; read" \; \
+  split-window "exec /usr/local/openjdk-16/bin/java -jar -Xms$MEMORYSIZE -Xmx$MEMORYSIZE $JAVAFLAGS /mc/paperspigot.jar --nojline nogui ; read" \; \
   select-layout even-horizontal
   
 
