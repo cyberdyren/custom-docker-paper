@@ -32,8 +32,8 @@ here is a example how to install the `custom-docker-paper` server:
 ```sh
 git clone https://github.com/cyberdyren/custom-docker-paper.git
 cd custom-docker-paper
-cp ./env.example ./.env
+cp ./.env.example ./.env
 nano ./.env
 sudo docker volume create --name=tobi_server_data
-docker-compose --env-file .env up --build
+sudo docker-compose --env-file .env up --build
 ```
