@@ -33,17 +33,28 @@ FROM openjdk:16.0.2-bullseye AS runtime
 
 LABEL maintainer="Max Oppermann <max@oppermann.fun> https://github.com/Max-42"
 
+SHELL ["/bin/bash", "-c"]
+
 WORKDIR /mc/
 
+RUN addgroup --system --gid ${PGID:-9001} dockergroup
+RUN useradd --shell "/bin/sh" --uid ${PUID:-9001} --gid ${PGID:-9001} dockeruser
 #Copy executable .jar file from the build stage
 COPY --from=build /opt/minecraft/paperspigot.jar /mc/paperspigot.jar
 
-VOLUME [ "/mc/" ]
-
 #Copy entrypoint.sh (and all other files that might be added in the future)
-COPY ./volumes/tobi_server_data /var/tmp/server_volume_files
+COPY ./volumes/tobi_server_data/ /var/tmp/server_volume_files/
 
-RUN mv /var/tmp/server_volume_files/ /mc && chmod 111 /mc/entrypoint.sh
+RUN ls -la
+RUN mv /var/tmp/server_volume_files/* /mc/
+RUN ls -l /mc/
+RUN chmod 111 /mc/entrypoint.sh
+RUN ls -la
+
+RUN chown -vR ${PUID:-9001}:${PGID:-9001} /mc/ && chmod -vR ug+rwx /mc/ && chown -vR ${PUID:-9001}:${PGID:-9001} /mc
+RUN ls -la
+
+VOLUME [ "/mc/" ]
 
 RUN apt-get update && apt-get install -y openssh-server tmux htop iftop gosu
 
