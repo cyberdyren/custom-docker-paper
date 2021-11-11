@@ -41,7 +41,9 @@ COPY --from=build /opt/minecraft/paperspigot.jar /mc/paperspigot.jar
 VOLUME [ "/mc/" ]
 
 #Copy entrypoint.sh (and all other files that might be added in the future)
-COPY ./volumes/tobi_server_data /mc/
+COPY ./volumes/tobi_server_data /var/tmp/server_volume_files
+
+RUN mv /var/tmp/server_volume_files/ /mc && chmod 111 /mc/entrypoint.sh
 
 RUN apt-get update && apt-get install -y openssh-server tmux htop iftop gosu
 
@@ -51,7 +53,7 @@ COPY ./config/sshd_config /etc/ssh/sshd_config
 ARG sshrootpassword=y0urSecuReP4SsWoRD
 ENV SSH_ROOT_PASSWORD=$sshrootpassword
 #sets the ssh root password
-RUN echo 'root:$sshrootpassword' | chpasswd 
+RUN echo 'dockeruser:$sshrootpassword' | chpasswd 
 
 COPY ./config/.bashrc /root/.bashrc
 
@@ -86,5 +88,4 @@ RUN set -eux; \
 ARG memory_size=1G
 ENV MEMORYSIZE=$memory_size
 
-RUN ["chmod", "+x", "/mc/entrypoint.sh"]
 ENTRYPOINT ["/mc/entrypoint.sh"]

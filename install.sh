@@ -1,13 +1,8 @@
 #!/bin/sh
-
-for i in {20..01}
-do
-tput cup 10 $l
-echo "Warning: Remember to copy the .env.example to .env File and CHANGE THE PASSWORD!"
-echo -n "$i"
-sleep 1
-done
+echo"You may not execute this, but u can copy paste <3 thx ;)"
+echo"docker volume create --name=tobi_server_data"
+echo"docker-compose --env-file .env up --build-arg sshrootpassword=root:y0urR34lYSecuReP4SsWoRD"
+exit #prevents execution
 
 docker volume create --name=tobi_server_data
-
-docker-compose --env-file .env up
+docker-compose --env-file .env up --build-arg sshrootpassword=root:y0urR34lYSecuReP4SsWoRD
