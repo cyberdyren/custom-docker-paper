@@ -14,7 +14,7 @@ if ! id "$DOCKER_USER" >/dev/null 2>&1; then
     addgroup --system --gid $GROUP_ID $DOCKER_GROUP
     #useradd -s "/bin/sh" -u $USER_ID --gid $DOCKER_GROUP -D $DOCKER_USER
     #useradd -s "/bin/sh" -u $USER_ID --gid $DOCKER_GROUP -D $DOCKER_USER
-    useradd --shell "/bin/sh" --uid $USER_ID --gid $GROUP_ID $DOCKER_USER
+    useradd --shell "/bin/bash" --uid $USER_ID --gid $GROUP_ID $DOCKER_USER
 
     chown -vR $USER_ID:$GROUP_ID /mc/
     chmod -vR ug+rwx /mc/

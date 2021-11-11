@@ -11,7 +11,6 @@ ENV PAPERSPIGOT_CI_URL=$paperspigot_ci_url
 
 WORKDIR /opt/minecraft
 
-
 #Using Paperclip to avoid the legal problems of the GPL's linking clause
 
 # Download paperclip
@@ -24,7 +23,7 @@ RUN /opt/openjdk-16/bin/java -Dpaperclip.patchonly=true -jar /opt/minecraft/pape
 RUN mv /opt/minecraft/cache/patched*.jar paperspigot.jar
 
 
-        
+
     #   #   #
 #   Enviroment  #
     #   #   #
@@ -37,22 +36,18 @@ SHELL ["/bin/bash", "-c"]
 
 WORKDIR /mc/
 
+#Add docker User and Group
 RUN addgroup --system --gid ${PGID:-9001} dockergroup
-RUN useradd --shell "/bin/sh" --uid ${PUID:-9001} --gid ${PGID:-9001} dockeruser
+RUN useradd --shell "/bin/bash" --uid ${PUID:-9001} --gid ${PGID:-9001} dockeruser
 #Copy executable .jar file from the build stage
 COPY --from=build /opt/minecraft/paperspigot.jar /mc/paperspigot.jar
 
 #Copy entrypoint.sh (and all other files that might be added in the future)
 COPY ./volumes/tobi_server_data/ /var/tmp/server_volume_files/
 
-RUN ls -la
 RUN mv /var/tmp/server_volume_files/* /mc/
-RUN ls -l /mc/
-RUN chmod 111 /mc/entrypoint.sh
-RUN ls -la
-
 RUN chown -vR ${PUID:-9001}:${PGID:-9001} /mc/ && chmod -vR ug+rwx /mc/ && chown -vR ${PUID:-9001}:${PGID:-9001} /mc
-RUN ls -la
+RUN chown root:root /mc/entrypoint.sh && chmod 111 /mc/entrypoint.sh
 
 VOLUME [ "/mc/" ]
 
@@ -63,10 +58,10 @@ COPY ./config/sshd_config /etc/ssh/sshd_config
 #ToDo
 ARG sshrootpassword=y0urSecuReP4SsWoRD
 ENV SSH_ROOT_PASSWORD=$sshrootpassword
-#sets the ssh root password
-RUN echo 'dockeruser:$sshrootpassword' | chpasswd 
+#set the ssh root password
+RUN echo "dockeruser:$sshrootpassword" | chpasswd 
 
-COPY ./config/.bashrc /root/.bashrc
+COPY ./config/.bashrc /home/dockeruser/.bashrc
 
 RUN mkdir /var/run/sshd
 RUN ssh-keygen -A
@@ -81,10 +76,6 @@ EXPOSE 25565/udp
 #JVM Tuning Flags by aikar (Slightly modified)
 ARG java_flags="-XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+UseCompressedOops  -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:-UseAdaptiveSizePolicy -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Dfile.encoding=UTF-8 -Dusing.aikars.flags=mcflags.emc.gs -Dcom.mojang.eula.agree=true-XX:CompileThreshold=100"
 ENV JAVAFLAGS=$java_flags
-
-
-
-#RUN chmod +x /mc/start.sh
 
 #Install gosu
 RUN set -eux; \
