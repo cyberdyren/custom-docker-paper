@@ -61,8 +61,10 @@ ENV SSH_ROOT_PASSWORD=$sshrootpassword
 #set the ssh root password
 RUN echo "dockeruser:$sshrootpassword" | chpasswd 
 
-COPY ./config/.bashrc /home/dockeruser/.bashrc
+COPY ./config/home/dotfiles /home/dockeruser/
+RUN chmod 755 /home/dockeruser/.bashrc && chmod 755 /home/dockeruser/.profile
 
+#Setup the ssh server
 RUN mkdir /var/run/sshd
 RUN ssh-keygen -A
 RUN /etc/init.d/ssh start
@@ -84,7 +86,6 @@ RUN set -eux; \
 	rm -rf /var/lib/apt/lists/*; \
 # verify that the binary works
 	gosu nobody true
-
 
 # Set memory size (Default 1G)
 ARG memory_size=1G
