@@ -11,7 +11,7 @@ services:
     build:
       context: .
       args:
-        sshrootpassword: ${SSH_ROOT_PASS}
+        sshrootpassword: ${SSH_ROOT_PASSWORD}
     ports:
       - ${PAPER_PORT}:25565
       - ${SSH_PORT}:22
