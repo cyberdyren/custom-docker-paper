@@ -9,6 +9,8 @@ services:
 
   server:
     build: .
+      args:
+        sshrootpassword: ${SSH_ROOT_PASS}
     ports:
       - ${PAPER_PORT}:25565
       - ${SSH_PORT}:22
