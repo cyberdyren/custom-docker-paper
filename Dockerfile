@@ -66,7 +66,6 @@ RUN chmod 755 /home/dockeruser/.bashrc && chmod 755 /home/dockeruser/.profile
 
 #Setup the ssh server
 RUN mkdir /var/run/sshd
-RUN ssh-keygen -A
 RUN /etc/init.d/ssh start
 
 #Expose Network ports
