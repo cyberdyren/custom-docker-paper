@@ -1,7 +1,7 @@
     #   #   #
 #     Build     #
     #   #   #
-FROM openjdk:16-alpine AS build
+FROM openjdk:17-alpine AS build
 
 LABEL maintainer="Max Oppermann <max@oppermann.fun> https://github.com/Max-42"
 
