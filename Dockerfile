@@ -6,7 +6,7 @@ FROM openjdk:16-alpine AS build
 LABEL maintainer="Max Oppermann <max@oppermann.fun> https://github.com/Max-42"
 
 #ARG paperspigot_ci_url=https://papermc.io/ci/job/Paper-1.17.1/lastStableBuild/artifact/
-ARG paperspigot_ci_url=https://papermc.io/api/v1/paper/1.18.1/latest/download
+ARG paperspigot_ci_url=https://papermc.io/api/v2/projects/paper/versions/1.18.1/builds/152/downloads/paper-1.18.1-152.jar
 ENV PAPERSPIGOT_CI_URL=$paperspigot_ci_url
 
 WORKDIR /opt/minecraft
