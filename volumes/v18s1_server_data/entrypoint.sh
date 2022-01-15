@@ -7,11 +7,11 @@ V18S1_GROUP='v18s1group'
 if ! id "$v18s1_USER" >/dev/null 2>&1; then
     echo "First start of the v18s1 container, start initialization process..."
 
-    USER_ID=${PUID:-9001}
-    GROUP_ID=${PGID:-9001}
+    USER_ID=${PUID:-9002}
+    GROUP_ID=${PGID:-9002}
     echo "Starting with $USER_ID:$GROUP_ID (UID:GID)"
 
-    addgroup --system --gid $GROUP_ID $v18s1_GROUP
+    addgroup --system --gid $GROUP_ID $V18S1_GROUP
     #useradd -s "/bin/sh" -u $USER_ID --gid $v18s1_GROUP -D $v18s1_USER
     #useradd -s "/bin/sh" -u $USER_ID --gid $V18S1_GROUP -D $V18S1_USER
     useradd --shell "/bin/bash" --uid $USER_ID --gid $GROUP_ID $V18S1_USER

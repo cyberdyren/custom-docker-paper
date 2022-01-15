@@ -6,7 +6,7 @@ FROM openjdk:17-alpine AS build
 LABEL maintainer="Max Oppermann <max@oppermann.fun> https://github.com/Max-42"
 
 #ARG paperspigot_ci_url=https://papermc.io/ci/job/Paper-1.17.1/lastStableBuild/artifact/
-ARG paperspigot_ci_url=https://papermc.io/api/v2/projects/paper/versions/1.18.1/builds/152/downloads/paper-1.18.1-152.jar
+ARG paperspigot_ci_url=https://papermc.io/api/v2/projects/paper/versions/1.18.1/builds/151/downloads/paper-1.18.1-151.jar
 ENV PAPERSPIGOT_CI_URL=$paperspigot_ci_url
 
 WORKDIR /opt/minecraft
@@ -19,8 +19,10 @@ ADD ${PAPERSPIGOT_CI_URL} paperclip.jar
 # Run paperclip and obtain patched jar
 RUN /opt/openjdk-17/bin/java -Dpaperclip.patchonly=true -jar /opt/minecraft/paperclip.jar; exit 0
 
+RUN ls -l /opt/minecraft/cache/
+
 # Copy build jar
-RUN mv /opt/minecraft/cache/patched*.jar paperspigot.jar
+RUN mv /opt/minecraft/cache/*.jar paperspigot.jar
 
 
 
@@ -37,8 +39,8 @@ SHELL ["/bin/bash", "-c"]
 WORKDIR /mc/
 
 #Add docker User and Group
-RUN addgroup --system --gid ${PGID:-9001} dockergroup
-RUN useradd --shell "/bin/bash" --uid ${PUID:-9001} --gid ${PGID:-9001} v18s1
+RUN addgroup --system --gid ${PGID:-9002} dockergroup
+RUN useradd --shell "/bin/bash" --uid ${PUID:-9002} --gid ${PGID:-9002} v18s1
 #Copy executable .jar file from the build stage
 COPY --from=build /opt/minecraft/paperspigot.jar /mc/paperspigot.jar
 
@@ -46,7 +48,7 @@ COPY --from=build /opt/minecraft/paperspigot.jar /mc/paperspigot.jar
 COPY ./volumes/v18s1_server_data/ /var/tmp/server_volume_files/
 
 RUN mv /var/tmp/server_volume_files/* /mc/
-RUN chown -vR ${PUID:-9001}:${PGID:-9001} /mc/ && chmod -vR ug+rwx /mc/ && chown -vR ${PUID:-9001}:${PGID:-9001} /mc
+RUN chown -vR ${PUID:-9002}:${PGID:-9002} /mc/ && chmod -vR ug+rwx /mc/ && chown -vR ${PUID:-9002}:${PGID:-9002} /mc
 RUN chown root:root /mc/entrypoint.sh && chmod 111 /mc/entrypoint.sh
 
 VOLUME [ "/mc/" ]
