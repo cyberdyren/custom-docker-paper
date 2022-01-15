@@ -28,7 +28,7 @@ RUN mv /opt/minecraft/cache/patched*.jar paperspigot.jar
 #   Enviroment  #
     #   #   #
         
-FROM openjdk:16.0.2-bullseye AS runtime
+FROM openjdk:17.0.1-bullseye AS runtime
 
 LABEL maintainer="Max Oppermann <max@oppermann.fun> https://github.com/Max-42"
 
