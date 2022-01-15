@@ -1,3 +1,3 @@
 if [[ -n "$PS1" ]] && [[ -z "$TMUX" ]] && [[ -n "$SSH_CONNECTION" ]]; then
-  tmux attach-session -t tobi-server || tmux new-session -s tobi-server
+  tmux attach-session -t mc-server || tmux new-session -s mc-server
 fi

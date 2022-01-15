@@ -1,9 +1,9 @@
 version: "3.9" 
 
 volumes:
-  tobi_server_data:
+  v18s1_server_data:
     external: 
-      name:  ${TOBI_VOLUME_SERVER_DATA}
+      name:  ${V18S1_VOLUME_SERVER_DATA}
 
 services:
 
@@ -18,7 +18,7 @@ services:
 
     volumes:
 #      - .:/mc
-      - tobi_server_data:/mc/
+      - v18s1_server_data:/mc/
 
     restart: always
 
@@ -33,12 +33,12 @@ services:
 
 
     networks:
-      tobi-server-net:
+      mc-server-net:
         ipv4_address: 172.16.226.3
 
 
 networks:
-  tobi-server-net:
+  mc-server-net:
     ipam:
       driver: default
       config:
