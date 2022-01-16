@@ -41,12 +41,13 @@ git config --global user.email "V18S1@oppisoft.de"
 echo "running git init..."
 git init
 
-echo "git add -u"
-git add -u
+echo "adding . to git"
+git add .
 
-echo "commiting..."
+now=$(date)
+echo "commiting at $now ..."
 
-git commit -m "Server-Commit" -m "`$commitDate`"
+git commit -a -m "Server-Commit $now" -m "`$commitDate`"
 
 echo "Starting ssh Server..."
 /usr/sbin/sshd
