@@ -41,8 +41,8 @@ git config --global user.email "V18S1@oppisoft.de"
 echo "running git init..."
 git init
 
-echo "adding . to git"
-git add .
+echo "git add -u"
+git add -u
 
 echo "commiting..."
 
