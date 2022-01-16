@@ -5,25 +5,24 @@ FROM openjdk:17-alpine AS build
 
 LABEL maintainer="Max Oppermann <max@oppermann.fun> https://github.com/Max-42"
 
-#ARG paperspigot_ci_url=https://papermc.io/ci/job/Paper-1.17.1/lastStableBuild/artifact/
-ARG paperspigot_ci_url=https://papermc.io/api/v2/projects/paper/versions/1.18.1/builds/151/downloads/paper-1.18.1-151.jar
-ENV PAPERSPIGOT_CI_URL=$paperspigot_ci_url
+ARG version=1.18.1
+
+RUN apk add curl jq
 
 WORKDIR /opt/minecraft
 
-#Using Paperclip to avoid the legal problems of the GPL's linking clause
+COPY ./getpaper.sh /
 
-# Download paperclip
-ADD ${PAPERSPIGOT_CI_URL} paperclip.jar
+RUN chmod +x /getpaper.sh
+
+RUN /getpaper.sh ${version}
+
+#copy eula
+
+COPY ./volumes/v18s1_server_data/eula.txt ./eula.txt
 
 # Run paperclip and obtain patched jar
 RUN /opt/openjdk-17/bin/java -Dpaperclip.patchonly=true -jar /opt/minecraft/paperclip.jar; exit 0
-
-RUN ls -l /opt/minecraft/cache/
-
-# Copy build jar
-RUN mv /opt/minecraft/cache/*.jar paperspigot.jar
-
 
 
     #   #   #
@@ -39,16 +38,16 @@ SHELL ["/bin/bash", "-c"]
 WORKDIR /mc/
 
 #Add docker User and Group
-RUN addgroup --system --gid ${PGID:-9002} dockergroup
-RUN useradd --shell "/bin/bash" --uid ${PUID:-9002} --gid ${PGID:-9002} v18s1
+RUN addgroup --system --gid ${PGID:-9001} dockergroup
+RUN useradd --shell "/bin/bash" --uid ${PUID:-9001} --gid ${PGID:-9001} v18s1user
 #Copy executable .jar file from the build stage
-COPY --from=build /opt/minecraft/paperspigot.jar /mc/paperspigot.jar
+COPY --from=build /opt/minecraft/paperclip.jar /mc/paperspigot.jar
 
 #Copy entrypoint.sh (and all other files that might be added in the future)
 COPY ./volumes/v18s1_server_data/ /var/tmp/server_volume_files/
 
 RUN mv /var/tmp/server_volume_files/* /mc/
-RUN chown -vR ${PUID:-9002}:${PGID:-9002} /mc/ && chmod -vR ug+rwx /mc/ && chown -vR ${PUID:-9002}:${PGID:-9002} /mc
+RUN chown -vR ${PUID:-9001}:${PGID:-9001} /mc/ && chmod -vR ug+rwx /mc/ && chown -vR ${PUID:-9001}:${PGID:-9001} /mc
 RUN chown root:root /mc/entrypoint.sh && chmod 111 /mc/entrypoint.sh
 
 VOLUME [ "/mc/" ]
@@ -61,10 +60,10 @@ COPY ./config/sshd_config /etc/ssh/sshd_config
 ARG sshrootpassword=y0urSecuReP4SsWoRD
 ENV SSH_ROOT_PASSWORD=$sshrootpassword
 #set the ssh root password
-RUN echo "v18s1:$sshrootpassword" | chpasswd 
+RUN echo "v18s1user:$sshrootpassword" | chpasswd 
 
-COPY ./config/home/dotfiles /home/v18s1/
-RUN chmod 755 /home/v18s1/.bashrc && chmod 755 /home/v18s1/.profile
+COPY ./config/home/dotfiles /home/v18s1user/
+RUN chmod 755 /home/v18s1user/.bashrc && chmod 755 /home/v18s1user/.profile
 
 #Setup the ssh server
 RUN mkdir /var/run/sshd
@@ -77,7 +76,7 @@ EXPOSE 25565/tcp
 EXPOSE 25565/udp
 
 #JVM Tuning Flags by aikar (Slightly modified)
-ARG java_flags="-XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+UseCompressedOops  -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:-UseAdaptiveSizePolicy -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Dfile.encoding=UTF-8 -Dusing.aikars.flags=mcflags.emc.gs -Dcom.mojang.eula.agree=true-XX:CompileThreshold=100"
+ARG java_flags="-Dlog4j2.formatMsgNoLookups=true -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+UseCompressedOops  -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:-UseAdaptiveSizePolicy -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Dfile.encoding=UTF-8 -Dusing.aikars.flags=mcflags.emc.gs -Dcom.mojang.eula.agree=true-XX:CompileThreshold=100"
 ENV JAVAFLAGS=$java_flags
 
 #Install gosu
