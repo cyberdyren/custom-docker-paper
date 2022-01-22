@@ -3,3 +3,6 @@ logs
 cache
 versions
 paperspigot.jar
+*.log
+#I just rename disabled jars to .bak 
+*.bak
