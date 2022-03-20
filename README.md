@@ -3,33 +3,14 @@
 ## Warning
 
 A ssh server with password login is enabeld!!
-> (Set the password as enviroment variable)
-
-## Build and run the container
-
-- clone the repo with
-  
-  ```sh
-  git clone https://github.com/max-42/custom-docker-paper.git
-  ```
-
-- cd into the directory
-- copy and edit [`example.env`](https://github.com/max-42/custom-docker-paper/blob/main/.env.example) to `.env` file and change the root password!
-
-  ```sh
-  docker volume create --name=v18s1_server_data
-  
-  docker-compose --env-file .env up --build
-  ```
-
-- if you need want to use other ports for the ssh server and the Paper Minecraft server, you can change them to in the `.env` file.
+> (Set the password as enviroment variable in the .env file ([see below](#edit-the-env-file))
 
 
 ## Setup
 
 here is a example how to install the `custom-docker-paper` server:
 (Make sure you have at least git, nano and of course docker and docker-compose installed)
-### Download the repository
+### Clone the repository
 
 ```sh
 git clone https://github.com/max-42/custom-docker-paper.git
@@ -52,6 +33,8 @@ cp ./.env.example ./.env
 ```sh
 nano ./.env
 ```
+Here you can **change the SSH password** and the ports that the server should (SSH and Paper) use.
+
 
 
 ### Create a the docker volume for the server
