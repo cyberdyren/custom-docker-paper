@@ -40,7 +40,7 @@ Here you can **change the SSH password** and the ports that the server should (S
 ### Create a the docker volume for the server
 
 ```sh
-sudo docker volume create --name=v18s1_server_data
+sudo docker volume create --name=neu_server_data
 ```
 
 ### Final Step: Setup throuh docker compose
