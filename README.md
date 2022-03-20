@@ -1,6 +1,7 @@
 # Custom Paper 1.18.1 Server
 
 [![Install-Video](https://upload.oppisoft.de/x/4d8nL4u2b4u8Ndf.gif)](https://upload.oppisoft.de/x/4d8nL4u2b4u8Ndf.mp4)
+> Klick the video for higher quality.
 
 ## Warning
 
