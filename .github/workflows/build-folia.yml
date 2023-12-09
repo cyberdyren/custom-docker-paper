@@ -1,0 +1,37 @@
+name: Build with Gradle
+
+on:
+  push:
+    branches:
+      - main
+      - build-folia
+  pull_request:
+    branches:
+      - main
+      - build-folia
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up JDK
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'adopt'
+        java-version: '11'
+
+    - name: Build with Gradle
+      run: |
+        chmod +x gradlew
+        ./gradlew build
+
+    - name: Upload Artifact
+      if: success()
+      uses: actions/upload-artifact@v2
+      with:
+        name: folia-server-artifact
+        path: ./Folia-Server/build/libs/*.jar
