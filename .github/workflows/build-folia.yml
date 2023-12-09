@@ -29,7 +29,6 @@ jobs:
 
     - name: Build with Gradle
       run: |
-        cd Folia-Server
         chmod +x gradlew
         ./gradlew build
 
