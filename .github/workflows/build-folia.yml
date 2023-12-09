@@ -15,8 +15,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
+    - name: Checkout PaperMC/Folia repository
       uses: actions/checkout@v2
+      with:
+        repository: PaperMC/Folia
+        ref: ${{ github.event_name == 'pull_request' ? github.event.pull_request.head.ref : github.event.ref }}
 
     - name: Set up JDK
       uses: actions/setup-java@v2
@@ -26,12 +29,12 @@ jobs:
 
     - name: Build with Gradle
       run: |
+        cd Folia-Server
         chmod +x gradlew
         ./gradlew build
 
-    - name: Upload Artifact
-      if: success()
+    - name: Upload artifact to Cache
       uses: actions/upload-artifact@v2
       with:
-        name: folia-server-artifact
-        path: ./Folia-Server/build/libs/*.jar
+        name: folia-jar
+        path: Folia-Server/build/libs/*.jar
