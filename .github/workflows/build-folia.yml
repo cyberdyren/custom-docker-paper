@@ -36,9 +36,9 @@ jobs:
 
     - name: Build Reobf Paperclip
       run: ./gradlew createReobfPaperclipJar
-      
+
     - name: Upload Build Artifact
       uses: actions/upload-artifact@v3
       with:
         name: Folia
-        path: build/libs/*
+        path: build/libs/*folia-bundler*reobf.jar
