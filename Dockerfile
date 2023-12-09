@@ -7,19 +7,39 @@ LABEL maintainer="Max Oppermann <max@oppermann.fun> https://github.com/Max-42"
 
 ARG version=1.18.1
 
-RUN apk add curl jq
+RUN apk add curl jq git
 
 WORKDIR /opt/minecraft
 
-COPY ./getpaper.sh /
+###############
+RUN git clone https://github.com/PaperMC/Folia.git
 
-RUN chmod +x /getpaper.sh
+WORKDIR /opt/minecraft/Folia
 
-RUN /getpaper.sh ${version}
+RUN chmod +x gradlew
+
+RUN git config --global user.email "build@oppermann.fun" && git config --global user.name "Build Bot"
+
+RUN ./gradlew applyPatches
+
+RUN ./gradlew createReobfPaperclipJar
+
+
+###############
+
+#COPY ./getfolia.sh /
+
+#RUN chmod +x gradlew
+
+RUN chmod +x /getfolia.sh
+
+RUN /getfolia.sh
 
 #copy eula
 
 COPY ./volumes/v18s1_server_data/eula.txt ./eula.txt
+
+RUN ls -laR
 
 # Run paperclip and obtain patched jar
 RUN /opt/openjdk-17/bin/java -Dpaperclip.patchonly=true -jar /opt/minecraft/paperclip.jar; exit 0
