@@ -1,14 +1,9 @@
-name: Build with Gradle
+name: Patch and Build with Gradle
 
 on:
   push:
-    branches:
-      - main
-      - build-folia
+    branches: [ "**" ]
   pull_request:
-    branches:
-      - main
-      - build-folia
 
 jobs:
   build:
@@ -36,11 +31,14 @@ jobs:
     - name: Gradle Apply Patches
       run: ./gradlew applyPatches
 
-    - name: Gradle Build
-      run: ./gradlew build
+    #- name: Gradle Build
+    #  run: ./gradlew build
 
-    - name: Upload artifact to Cache
-      uses: actions/upload-artifact@v2
+    - name: Build Reobf Paperclip
+      run: ./gradlew createReobfPaperclipJar
+      
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v3
       with:
-        name: folia-jar
-        path: Folia-Server/build/libs/*.jar
+        name: Folia
+        path: build/libs/*
