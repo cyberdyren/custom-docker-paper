@@ -33,16 +33,32 @@ jobs:
       run: git config --global user.email "actions@github.com" && git config --global user.name "Github Actions"
 
     - name: Gradle Apply Patches
-      run: ./gradlew applyPatches
+      id: apply_patches
+      run: |
+        ./gradlew applyPatches
+        echo "::set-output name=cache-key::applyPatches-${{ hashFiles('build/**') }}"
 
     - name: Build Reobf Paperclip
-      run: ./gradlew createReobfPaperclipJar
+      id: reobf_paperclip
+      run: |
+        ./gradlew createReobfPaperclipJar
+        echo "::set-output name=cache-key::createReobfPaperclipJar-${{ hashFiles('build/**') }}"
 
     - name: Upload Build Artifact
       uses: actions/upload-artifact@v3
       with:
         name: Folia
         path: build/libs/*folia-bundler*reobf.jar
+
+    - name: Cache Gradle outputs
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/.gradle/caches
+          ./gradlew
+        key: ${{ runner.os }}-gradle-outputs-${{ steps.apply_patches.outputs.cache-key }}-${{ steps.reobf_paperclip.outputs.cache-key }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-outputs-
 
   build-container:
     runs-on: ubuntu-latest
