@@ -18,7 +18,9 @@ WORKDIR /opt/minecraft/Folia
 
 RUN chmod +x gradlew
 
-RUN git config --global user.email "build@oppermann.fun" && git config --global user.name "Build Bot"
+RUN git config --global user.email "build@oppermann.fun" && git config --global user.name "Build Bot" 
+
+RUN git config --global core.longpaths true
 
 RUN ./gradlew applyPatches
 
