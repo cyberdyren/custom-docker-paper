@@ -11,12 +11,12 @@ A ssh server with password login is enabeld!!
 
 ## Setup
 
-here is a example how to install the `custom-docker-paper` server:
+here is a example how to install the `v18s1` server:
 (Make sure you have at least git, nano and of course docker and docker-compose installed)
 ### Clone the repository
 
 ```sh
-git clone https://github.com/max-42/custom-docker-paper.git
+git clone https://github.com/max-42/v18s1.git
 ```
 
 ### Change the working directory into the source
@@ -25,7 +25,7 @@ git clone https://github.com/max-42/custom-docker-paper.git
 cd custom-docker-paper
 ```
 
-### Copy the sample [`example.env`](https://github.com/max-42/custom-docker-paper/blob/main/.env.example) file
+### Copy the sample [`example.env`](https://github.com/max-42/v18s1/blob/main/.env.example) file
 
 ```sh
 cp ./.env.example ./.env
