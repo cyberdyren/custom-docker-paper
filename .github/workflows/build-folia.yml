@@ -62,7 +62,7 @@ jobs:
       run: |
         file=$(find artifacts/ -type f -name 'folia-bundler-*.jar' -exec sh -c 'basename "$0" | grep -q "folia-bundler-.*-reobf.jar" && echo "$0"' {} \;)
         if [ -n "$file" ]; then
-          mv "$file" /artifacts/folia.jar
+          mv "$file" artifacts/folia.jar
           echo "File renamed to folia.jar"
         else
           echo "No file matching the pattern found"
