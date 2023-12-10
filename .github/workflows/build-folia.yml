@@ -60,8 +60,15 @@ jobs:
       run: ls -laR artifacts
 
     - name: Rename Artifact
-      run: mv artifacts/build/libs/*folia-bundler*reobf.jar artifacts/folia.jar
-
+      #mv artifacts/build/libs/*folia-bundler*reobf.jar artifacts/folia.jar
+      run: |
+        file=$(find artifacts/ -type f -name 'folia-bundler-*.jar' -exec sh -c 'basename "$0" | grep -q "folia-bundler-.*-reobf.jar" && echo "$0"' {} \;)
+        if [ -n "$file" ]; then
+          mv "$file" /artifacts/folia.jar
+          echo "File renamed to folia.jar"
+        else
+          echo "No file matching the pattern found"
+        fi
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag v18s1:$(date +%s)
 
