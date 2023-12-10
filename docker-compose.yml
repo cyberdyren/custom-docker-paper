@@ -1,20 +1,17 @@
 version: "3.9" 
 
-volumes:
-  v18s1_server_data:
-    external: 
-      name:  ${V18S1_VOLUME_SERVER_DATA}
 
 services:
-
   server:
-    build:
-      context: .
-      args:
-        sshrootpassword: ${SSH_ROOT_PASSWORD}
+    image: ghcr.io/max-42/v18s1:latest
+    #build:
+    #  context: .
+    #  args:
+    #    sshrootpassword: ${SSH_ROOT_PASSWORD}
     ports:
-      - ${PAPER_PORT}:25565
+      - ${MC_PORT}:25565
       - ${SSH_PORT}:22
+      - ${DB_PORT}:3060
 
     volumes:
 #      - .:/mc
@@ -22,19 +19,69 @@ services:
 
     restart: always
 
-
     stdin_open: true #docker run -i
     tty: true        #docker run -t
 
     stop_grace_period: 1m30s
 
     environment:
-      MEMORYSIZE: "1G"
+      MEMORYSIZE: "5G"
+      SSH_ROOT_PASSWORD: ${SSH_ROOT_PASSWORD}
+
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ssh.rule=Host(`${WEB_DOMAIN}`)"
+      - "traefik.http.routers.${MC_WEB_ROUTER_NAME}.entrypoints=${WEB_ENTRYPOINT_NAME}"
+      - "traefik.http.routers.${MC_WEB_ROUTER_NAME}.tls.certresolver=letsencryptresolver"
+      - "traefik.http.services.${MC_WEB_ROUTER_NAME}.loadbalancer.server.port=${WEB_SEVERPORT_INTERNAL}"
+
+      - "traefik.tcp.routers.${MC_GAME_ROUTER_NAME}.entrypoints=${MC_GAME_ENTRYPOINT_NAME}"
+      - "traefik.tcp.routers.${MC_GAME_ROUTER_NAME}.rule=HostSNI(`*`)"
+      - "traefik.tcp.routers.${MC_GAME_ROUTER_NAME}.service=${MC_GAME_ROUTER_NAME}-svc"
+      - "traefik.tcp.services.${MC_GAME_ROUTER_NAME}-svc.loadbalancer.server.port=${MC_GAME_SEVERPORT_INTERNAL}"
+
+      - "traefik.tcp.routers.${SSH_ROUTER_NAME}.entrypoints=${SSH_ENTRYPOINT_NAME}"
+      - "traefik.tcp.routers.${SSH_ROUTER_NAME}.rule=HostSNI(`*`)"
+      - "traefik.tcp.routers.${SSH_ROUTER_NAME}.service=${SSH_ROUTER_NAME}-svc"
+      - "traefik.tcp.services.${SSH_ROUTER_NAME}-svc.loadbalancer.server.port=${SSH_SEVERPORT_INTERNAL}"
 
 
     networks:
       mc-server-net:
         ipv4_address: 172.16.226.3
+  
+  mariadb:
+    image: mariadb
+    container_name: v18s1-database
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWOR}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    network_mode: bridge
+    labels:
+      - "traefik.enable=true"
+      - "traefik.tcp.routers.${DB_ROUTER_NAME}.rule=HostSNI(`*`)"
+      - "traefik.tcp.routers.${DB_ROUTER_NAME}.entrypoints=${DB_ENTRYPOINT_NAME}"
+      - "traefik.tcp.routers.${DB_ROUTER_NAME}.service=${DB_ROUTER_NAME}-svc"
+      - "traefik.tcp.services.${DB_ROUTER_NAME}-svc.loadbalancer.server.port=${DB_PORT}"
+    volumes:
+      - v18s1_db:/var/lib/mysql
+    restart: always
+    networks:
+      mc-server-net:
+        ipv4_address: 172.16.226.4
+
+volumes:
+  v18s1_db:
+    external: 
+      name:  ${V18S1_VOLUME_DATABASE}
+  v18s1_server_data:
+    external: 
+      name:  ${V18S1_VOLUME_SERVER_DATA}
+
+  
 
 
 networks:
@@ -45,3 +92,8 @@ networks:
         - subnet: "172.16.226.0/24"
           gateway: 172.16.226.1
         - subnet: "2001:3984:3926::/64"
+
+
+#- "--entrypoints.minecraft.address=:25565"
+#- "--entrypoints.ssh.address=:2222/tcp"
+#- "--entrypoints.minecraftdb.address=:3060"

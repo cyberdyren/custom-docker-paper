@@ -49,6 +49,10 @@ echo "commiting at $now ..."
 
 git commit -a -m "Server-Commit $now" -m "`$commitDate`"
 
+ssh_password="$SSH_ROOT_PASSWORD"
+echo "$DOCKER_USER:$ssh_password" | chpasswd
+ssh_password=""
+
 echo "Starting ssh Server..."
 /usr/sbin/sshd
 echo "Ready..."
