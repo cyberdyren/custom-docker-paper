@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  build-folia:
     runs-on: ubuntu-latest
 
     steps:
@@ -42,3 +42,4 @@ jobs:
       with:
         name: Folia
         path: build/libs/*folia-bundler*reobf.jar
+

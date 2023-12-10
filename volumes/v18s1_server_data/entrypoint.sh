@@ -58,7 +58,7 @@ echo "Creating or attaching to tmux session..."
 #iftop may not work due to missing privileges
 exec gosu $DOCKER_USER tmux \
   new-session -s v18s1-server "exec iftop -i eth0 -f 'dst port 25565' ; read" \; \
-  split-window "exec /usr/local/openjdk-17/bin/java -jar -Xms$MEMORYSIZE -Xmx$MEMORYSIZE $JAVAFLAGS /mc/paperspigot.jar nogui ; read" \; \
+  split-window "exec /usr/local/openjdk-17/bin/java -jar -Xms$MEMORYSIZE -Xmx$MEMORYSIZE $JAVAFLAGS /mc/folia.jar nogui ; read" \; \
   select-layout even-horizontal
   
 

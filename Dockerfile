@@ -41,8 +41,6 @@ COPY ./volumes/v18s1_server_data/eula.txt ./eula.txt
 
 RUN ls -laR
 
-# Run paperclip and obtain patched jar
-RUN /opt/openjdk-17/bin/java -Dpaperclip.patchonly=true -jar /opt/minecraft/paperclip.jar; exit 0
 
 
     #   #   #
@@ -61,7 +59,7 @@ WORKDIR /mc/
 RUN addgroup --system --gid ${PGID:-9001} dockergroup
 RUN useradd --shell "/bin/bash" --uid ${PUID:-9001} --gid ${PGID:-9001} v18s1user
 #Copy executable .jar file from the build stage
-COPY --from=build /opt/minecraft/paperclip.jar /mc/paperspigot.jar
+COPY --from=build /opt/minecraft/build/libs/folia.jar /mc/folia.jar
 
 #Copy entrypoint.sh (and all other files that might be added in the future)
 COPY ./volumes/v18s1_server_data/ /var/tmp/server_volume_files/
