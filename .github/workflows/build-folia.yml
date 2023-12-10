@@ -77,11 +77,10 @@ jobs:
           ${{ runner.os }}-docker-
 
     - name: Build the Docker image
-      run: |
-        docker build . --file Dockerfile --tag v18s1:$(date +%s)
-        docker tag v18s1:$(date +%s) ghcr.io/max-42/v18s1:latest
-        
+      run: docker build . --file Dockerfile --tag ghcr.io/Max-42/v18s1:latest
+
     - name: Push the Docker image
       run: |
-        echo ${{ secrets.GHCR_PAT }} | docker login ghcr.io -u max-42 --password-stdin
-        docker push ghcr.io/max-42/v18s1:latest
+        echo ${{ secrets.GHCR_PAT }} | docker login ghcr.io -u Max-42 --password-stdin
+        docker push ghcr.io/Max-42/v18s1:latest
+
