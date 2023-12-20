@@ -1,15 +1,53 @@
 version: "3.9" 
 
-
 services:
+  traefik:
+    name: traefik
+    image: traefik:v2.10.5
+    command:
+      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
+      - "--providers.docker.swarmMode=false" # Check (only tested with "false")
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network=bridge"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.minecraft.address=:${MC_PORT}"
+      - "--entrypoints.ssh.address=:${SSH_PORT}"
+      - "--entrypoints.minecraftdb.address=:${DB_PORT}"
+      - "--certificatesresolvers.letsencryptresolver.acme.httpchallenge=true"
+      - "--certificatesresolvers.letsencryptresolver.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.letsencryptresolver.acme.email=${LETSENCRYPT_EMAIL}" # Change this line
+      - "--certificatesresolvers.letsencryptresolver.acme.storage=/letsencrypt/acme.json"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--api.dashboard=false" #change to true to enable the traefik dashboard
+      - "--log.level=DEBUG"
+      - "--accesslog=true"
+    network_mode: bridge
+    ports:
+      - 80:80
+      - 443:443
+      - ${MC_PORT}:25565
+      - ${SSH_PORT}:2222
+      - ${DB_PORT}:3060
+    volumes:
+      - traefik_certificates:/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+    labels:
+      #- "traefik.enable=false" # change to true  and uncomment the following lines to enable the traefik dashboard (also check above in the command section)
+      #- "traefik.http.services.traefik.loadbalancer.server.port=888"
+      #- "traefik.http.routers.traefik.rule=Host(`${DOMAIN}`)" # Change this line
+      #- "traefik.http.routers.traefik.entrypoints=websecure"
+      #- "traefik.http.routers.traefik.tls.certresolver=letsencryptresolver"
+      #- "traefik.http.routers.traefik.service=api@internal"
+      #- "traefik.http.routers.traefik.middlewares=traefik-auth"
+      #- "traefik.http.middlewares.traefik-auth.basicauth.users=username:$$apr1$$DJR0VC86$$IsVrsF4CFTLRlz2uM.lRg0" # To generate use: htpasswd -nb username y0uRSecuRePassw0rD  | sed -e s/\\$/\\$\\$/g
+    restart: always
+
   server:
     image: ghcr.io/max-42/v18s1:latest
     hostname: v18s1-server
-    #build:
-    #  context: .
-    #  args:
-    #    sshrootpassword: ${SSH_ROOT_PASSWORD}
-    ##################
     #ports:
     #  - ${MC_PORT}:25565
     #  - ${SSH_PORT}:22
@@ -74,6 +112,8 @@ volumes:
   v18s1_db:
     external: true
   v18s1_server_data:
+    external: true
+  traefik_certificates:
     external: true
 
   

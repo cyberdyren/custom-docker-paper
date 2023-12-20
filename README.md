@@ -36,14 +36,16 @@ cp ./.env.example ./.env
 ```sh
 nano ./.env
 ```
-Here you can **change the SSH password** and the ports that the server should (SSH and Paper) use.
+
+Here you can **change the SSH password** and the ports that the server should (SSH and Folia, Web) use.
 
 
-
-### Create a the docker volume for the server
+### Create a the docker volumes for the server
 
 ```sh
 sudo docker volume create --name=v18s1_server_data
+sudo docker volume create --name=v18s1_db
+sudo docker volume create --name=traefik_certificates
 ```
 
 ### Final Step: Setup throuh docker compose
@@ -51,3 +53,15 @@ sudo docker volume create --name=v18s1_server_data
 ```sh
 sudo docker-compose --env-file .env up --build
 ```
+
+## If you are already using [Treafik Proxy](https://doc.traefik.io/traefik/)
+
+please 
+```
+
+if you want to enable the treafik dashboard change do the following
+-  change - ```"--api.dashboard=false"``` to ```true```.
+-  uncomment the entire ```labels:``` section
+-  run ```htpasswd -nb username y0uRSecuRePassw0rD  | sed -e s/\\$/\\$\\$/g``` to generate the basicauth string (change **username** and **y0uRSecuRePassw0rD**)
+-  insert the string generated in the step above into ```traefik.http.middlewares.traefik-auth.basicauth.users="<string>"```
+-  change **```treafik.example.com```** into your domain. (Remember to add a CNAME, AAAA or A record before, so that it resolves to your VPS)
