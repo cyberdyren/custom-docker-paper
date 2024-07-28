@@ -65,3 +65,4 @@ if you want to enable the treafik dashboard change do the following
 -  run ```htpasswd -nb username y0uRSecuRePassw0rD  | sed -e s/\\$/\\$\\$/g``` to generate the basicauth string (change **username** and **y0uRSecuRePassw0rD**)
 -  insert the string generated in the step above into ```traefik.http.middlewares.traefik-auth.basicauth.users="<string>"```
 -  change **```treafik.example.com```** into your domain. (Remember to add a CNAME, AAAA or A record before, so that it resolves to your VPS)
+```
